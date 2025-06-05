@@ -6658,6 +6658,8 @@
 #include "code\modules\wiremod\shell\wallmount.dm"
 #include "code\modules\zombie\items.dm"
 #include "code\modules\zombie\organs.dm"
+#include "gamejam\sunless_void\event_base.dm"
+#include "gamejam\sunless_void\overmap_basis.dm"
 #include "interface\interface.dm"
 #include "interface\menu.dm"
 #include "interface\stylesheet.dm"
