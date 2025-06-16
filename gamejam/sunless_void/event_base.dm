@@ -1,45 +1,27 @@
-// Основа взята из анимации смерти боргов. Комментарии смотреть там
+GLOBAL_LIST_INIT(random_sunvoid_events, list(/obj/structure/sunvoid/event_controller/random_event/carps, /obj/structure/sunvoid/event_controller/random_event/escape_pod))
 
-#define BASIC_EVENT(text) ("<font color='#d1824e'>" + text + "</font>")
+/obj/structure/sunvoid/event_controller
+	icon = 'icons/effects/random_spawners.dmi'
+	icon_state = "questionmark"
+	invisibility = 50
 
-/atom/movable/screen/sunvoid_event
-	screen_loc = "CENTER"
-	maptext_width = 300
-	maptext_height = 1000
-	maptext_y = 0
-
-	VAR_PRIVATE/time_per_message = 2 SECONDS
-	VAR_PRIVATE/list/messages = list(
-		BASIC_EVENT("Тест Тест Тест"),
-		BASIC_EVENT("Тест Тест Тест Тест.")
-	)
-
-/atom/movable/screen/sunvoid_event/Initialize(mapload, datum/hud/hud_owner)
+/obj/structure/sunvoid/event_controller/Initialize(mapload)
 	. = ..()
+	run_event()
 
-/atom/movable/screen/sunvoid_event/proc/run_animation()
-	set waitfor = FALSE
+/obj/structure/sunvoid/event_controller/proc/run_event()
+	for(var/mob/living/basic/sunvoid_ship/ship in get_turf(src))
+		INVOKE_ASYNC(ship, TYPE_PROC_REF(/mob/living/basic/sunvoid_ship, att_choice), ship)
+		qdel(src)
 
-	var/mob/living/basic/sunvoid_ship/ship = hud.mymob
+/obj/structure/sunvoid/event_controller/test1/run_event()
+	for(var/mob/living/basic/sunvoid_ship/ship in get_turf(src))
+		to_chat(ship, span_notice("Тест 1."))
+		INVOKE_ASYNC(ship, TYPE_PROC_REF(/mob/living/basic/sunvoid_ship, att_choice), ship)
+		qdel(src)
 
-	for(var/msg in messages)
-		maptext += MAPTEXT_PIXELLARI(msg) + "<br>"
-		maptext_y -= 14
-		sleep(time_per_message)
-		if(QDELETED(src))
-			if(!QDELETED(ship))
-				ship.clear_fullscreen(type)
-			return
-
-	sleep(0.5 SECONDS)
-	if(QDELETED(src))
-		if(!QDELETED(ship))
-			ship.clear_fullscreen(type, 1.5 SECONDS)
-		return
-
-	invisibility = INVISIBILITY_ABSTRACT
-	sleep(1.5 SECONDS)
-	if(!QDELETED(ship))
-		ship.clear_fullscreen(type)
-
-#undef BASIC_EVENT
+/obj/structure/sunvoid/event_controller/test2/run_event()
+	for(var/mob/living/basic/sunvoid_ship/ship in get_turf(src))
+		to_chat(ship, span_notice("Тест 2."))
+		INVOKE_ASYNC(ship, TYPE_PROC_REF(/mob/living/basic/sunvoid_ship, att_choice), ship)
+		qdel(src)
