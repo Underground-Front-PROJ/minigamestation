@@ -1,3 +1,38 @@
+// KEYBINDS
+
+/datum/keybinding/living/kick
+	hotkey_keys = list("R")
+	name = "kick"
+	full_name = "Kick"
+	description = "Kick close-range enemies in 1-tile radius"
+	keybind_signal = COMSIG_KB_LIVING_KICK_DOWN
+
+/datum/keybinding/living/kick/down(client/user, turf/target)
+	. = ..()
+	if(.)
+		return
+	var/mob/living/living_mob = user.mob
+	if(istype(living_mob, /mob/living/basic/re13_player))
+		var/mob/living/basic/re13_player/P = living_mob
+		P.combat_kick()
+		return TRUE
+
+/datum/keybinding/living/dash
+	hotkey_keys = list("Space")
+	name = "dash"
+	full_name = "Dash"
+	description = "Jump in the faced direction"
+	keybind_signal = COMSIG_KB_LIVING_DASH_DOWN
+
+/datum/keybinding/living/dash/down(client/user, turf/target)
+	. = ..()
+	if(.)
+		return
+	var/mob/living/living_mob = user.mob
+	if(istype(living_mob, /mob/living/basic/re13_player))
+		var/mob/living/basic/re13_player/P = living_mob
+		P.perform_dash()
+		return TRUE
 
 // HUD STUFF
 
@@ -15,57 +50,57 @@
 	build_hand_slots()
 
 	inv_box = new /atom/movable/screen/inventory(null, src)
-	inv_box.name = "first pocket"
+	inv_box.name = "internal storage"
 	inv_box.icon = ui_style
 	inv_box.icon_state = "pocket"
 	inv_box.icon_full = "template_small"
-	inv_box.screen_loc = ui_storage1
-	inv_box.slot_id = ITEM_SLOT_LPOCKET
+	inv_box.screen_loc = ui_re13slot1
+	inv_box.slot_id = ITEM_SLOT_RE13_STORAGE1
 	static_inventory += inv_box
 
 	inv_box = new /atom/movable/screen/inventory(null, src)
-	inv_box.name = "second pocket"
+	inv_box.name = "internal storage"
 	inv_box.icon = ui_style
 	inv_box.icon_state = "pocket"
 	inv_box.icon_full = "template_small"
-	inv_box.screen_loc = ui_storage2
-	inv_box.slot_id = ITEM_SLOT_RPOCKET
+	inv_box.screen_loc = ui_re13slot2
+	inv_box.slot_id = ITEM_SLOT_RE13_STORAGE2
 	static_inventory += inv_box
 
 	inv_box = new /atom/movable/screen/inventory(null, src)
-	inv_box.name = "third pocket"
+	inv_box.name = "internal storage"
 	inv_box.icon = ui_style
 	inv_box.icon_state = "pocket"
 	inv_box.icon_full = "template_small"
-	inv_box.screen_loc = ui_storage3
-	inv_box.slot_id = ITEM_SLOT_RPOCKET2
+	inv_box.screen_loc = ui_re13slot3
+	inv_box.slot_id = ITEM_SLOT_RE13_STORAGE3
 	static_inventory += inv_box
 
 	inv_box = new /atom/movable/screen/inventory(null, src)
-	inv_box.name = "fourth pocket"
+	inv_box.name = "internal storage"
 	inv_box.icon = ui_style
 	inv_box.icon_state = "pocket"
 	inv_box.icon_full = "template_small"
-	inv_box.screen_loc = ui_storage4
-	inv_box.slot_id = ITEM_SLOT_RPOCKET3
+	inv_box.screen_loc = ui_re13slot4
+	inv_box.slot_id = ITEM_SLOT_RE13_STORAGE4
 	static_inventory += inv_box
 
 	inv_box = new /atom/movable/screen/inventory(null, src)
-	inv_box.name = "fifth pocket"
+	inv_box.name = "internal storage"
 	inv_box.icon = ui_style
 	inv_box.icon_state = "pocket"
 	inv_box.icon_full = "template_small"
-	inv_box.screen_loc = ui_storage5
-	inv_box.slot_id = ITEM_SLOT_LPOCKET2
+	inv_box.screen_loc = ui_re13slot5
+	inv_box.slot_id = ITEM_SLOT_RE13_STORAGE5
 	static_inventory += inv_box
 
 	inv_box = new /atom/movable/screen/inventory(null, src)
-	inv_box.name = "sixth pocket"
+	inv_box.name = "internal storage"
 	inv_box.icon = ui_style
 	inv_box.icon_state = "pocket"
 	inv_box.icon_full = "template_small"
-	inv_box.screen_loc = ui_storage6
-	inv_box.slot_id = ITEM_SLOT_LPOCKET3
+	inv_box.screen_loc = ui_re13slot6
+	inv_box.slot_id = ITEM_SLOT_RE13_STORAGE6
 	static_inventory += inv_box
 
 	using = new /atom/movable/screen/drop(null, src)
@@ -192,7 +227,6 @@
 		examine_list += span_info("[examined.p_They()] [examined.p_have()] [held_item.examine_title(user)] in [examined.p_their()] \
 			[examined.get_held_index_name(examined.get_held_index_of_item(held_item))].")
 
-
 // MOB STUFF
 
 /mob/living/basic/re13_player
@@ -208,7 +242,9 @@
 
 	var/current_hitpoints = 5 // Настоящее ХП
 	var/current_infestation = 0
+
 	var/current_stam = 3
+	var/stam_regen = 10
 
 	var/hitpoints_indicator
 	var/stam_indicator
@@ -225,6 +261,15 @@
 	unsuitable_atmos_damage = 0
 	unsuitable_cold_damage = 0
 
+	// Костыльная реализация инвентаря
+
+	var/obj/item/internal_storage1
+	var/obj/item/internal_storage2
+	var/obj/item/internal_storage3
+	var/obj/item/internal_storage4
+	var/obj/item/internal_storage5
+	var/obj/item/internal_storage6
+
 /mob/living/basic/re13_player/Initialize(mapload)
 	. = ..()
 	add_traits(list(TRAIT_ADVANCEDTOOLUSER, TRAIT_CAN_STRIP), ROUNDSTART_TRAIT)
@@ -234,6 +279,13 @@
 /mob/living/basic/re13_player/Life()
 	. = ..()
 
+	if(current_stam < max_stam && !stunned)
+		stam_regen -= 1
+
+	if(stam_regen <= 0)
+		current_stam += 1
+		stam_regen = initial(stam_regen)
+
 	if(stunned)
 
 		var/mob/living/basic/re13_enemy/E = locate() in orange(1,src) // Проверяем, держат ли нас вообще
@@ -242,10 +294,17 @@
 			if(!E) // Если вокруг нас нет ни единого противника - мы моментально возвращаемся в игру
 				stunned_for = 0
 				stunned = FALSE
+				remove_filter("re13_grab")
+				remove_offsets(GRABBING_TRAIT)
 			else
 				stunned_for -= 1
 		else
 			stunned = FALSE
+			remove_filter("re13_grab")
+			remove_offsets(GRABBING_TRAIT)
+
+/mob/living/basic/re13_player/grab(mob/living/target)
+	return FALSE
 
 /mob/living/basic/re13_player/Move()
 	if(stunned)
@@ -253,17 +312,202 @@
 	. = ..()
 
 /mob/living/basic/re13_player/MouseEntered(location, control, params)
-	var/mutable_appearance/health_icon = mutable_appearance('gamejam/re13/operator.dmi', "health[current_hitpoints]", SCREENTIP_LAYER)
-	health_icon.pixel_y += 20
-	hitpoints_indicator = health_icon
+	if(usr == src)
+		var/mutable_appearance/health_icon = mutable_appearance('gamejam/re13/operator.dmi', "health[current_hitpoints]", SCREENTIP_LAYER, HUD_PLANE)
+		health_icon.pixel_y += 20
+		hitpoints_indicator = health_icon
 
-	var/mutable_appearance/stamina_icon = mutable_appearance('gamejam/re13/operator.dmi', "stamina[current_stam]", SCREENTIP_LAYER)
-	stamina_icon.pixel_y -= 16
-	stam_indicator = stamina_icon
+		var/mutable_appearance/stamina_icon = mutable_appearance('gamejam/re13/operator.dmi', "stamina[current_stam]", SCREENTIP_LAYER, HUD_PLANE)
+		stamina_icon.pixel_y -= 16
+		stam_indicator = stamina_icon
 
-	add_overlay(hitpoints_indicator)
-	add_overlay(stam_indicator)
+		add_overlay(hitpoints_indicator)
+		add_overlay(stam_indicator)
 
 /mob/living/basic/re13_player/MouseExited(location, control, params)
-	cut_overlay(hitpoints_indicator)
-	cut_overlay(stam_indicator)
+	if(usr == src)
+		cut_overlay(hitpoints_indicator)
+		cut_overlay(stam_indicator)
+
+/mob/living/basic/re13_player/proc/combat_kick()
+	if(current_stam <= 0)
+		return
+
+	current_stam -= 1
+	animate(src, pixel_y = 12, time = 0.8 SECONDS, easing = QUAD_EASING | EASE_OUT)
+	animate(pixel_y = 0, time = 0.3 SECONDS, easing = QUAD_EASING | EASE_IN)
+	spawn(1.2 SECONDS)
+		spin(4, 1)
+
+	for(var/mob/living/basic/re13_enemy/E in orange(1,src))
+
+		if(E.no_walk)
+			E.no_walk = FALSE
+			E.no_walk_for = initial(E.no_walk_for)
+
+		var/relative_direction = get_cardinal_dir(src, E)
+		var/atom/throw_target = get_edge_target_turf(E, relative_direction)
+
+		E.throw_at(throw_target, rand(3,6), 5, src, spin = TRUE)
+
+/mob/living/basic/re13_player/proc/perform_dash()
+	if(current_stam <= 0 || stunned)
+		return
+
+	current_stam -= 1
+
+	var/relative_direction = dir
+	var/atom/throw_target = get_edge_target_turf(src, relative_direction)
+	throw_at(throw_target, 3, 1, src, spin = FALSE, gentle = TRUE)
+
+// Код инвентаря
+
+/mob/living/basic/re13_player/doUnEquip(obj/item/item_dropping, force, newloc, no_move, invdrop = TRUE, silent = FALSE)
+	if(..())
+		update_held_items()
+		if(item_dropping == internal_storage1)
+			internal_storage1 = null
+			update_inv_internal_storage()
+		if(item_dropping == internal_storage2)
+			internal_storage2 = null
+			update_inv_internal_storage()
+		if(item_dropping == internal_storage3)
+			internal_storage3 = null
+			update_inv_internal_storage()
+		if(item_dropping == internal_storage4)
+			internal_storage4 = null
+			update_inv_internal_storage()
+		if(item_dropping == internal_storage5)
+			internal_storage5 = null
+			update_inv_internal_storage()
+		if(item_dropping == internal_storage6)
+			internal_storage6 = null
+			update_inv_internal_storage()
+		return TRUE
+	return FALSE
+
+
+/mob/living/basic/re13_player/can_equip(obj/item/item, slot, disable_warning = FALSE, bypass_equip_delay_self = FALSE, ignore_equipped = FALSE, indirect_action = FALSE)
+	switch(slot)
+		if(ITEM_SLOT_RE13_STORAGE1)
+			if(internal_storage1)
+				return FALSE
+			return TRUE
+		if(ITEM_SLOT_RE13_STORAGE2)
+			if(internal_storage2)
+				return FALSE
+			return TRUE
+		if(ITEM_SLOT_RE13_STORAGE3)
+			if(internal_storage3)
+				return FALSE
+			return TRUE
+		if(ITEM_SLOT_RE13_STORAGE4)
+			if(internal_storage4)
+				return FALSE
+			return TRUE
+		if(ITEM_SLOT_RE13_STORAGE5)
+			if(internal_storage5)
+				return FALSE
+			return TRUE
+		if(ITEM_SLOT_RE13_STORAGE6)
+			if(internal_storage6)
+				return FALSE
+			return TRUE
+	..()
+
+
+/mob/living/basic/re13_player/get_item_by_slot(slot_id)
+	switch(slot_id)
+		if(ITEM_SLOT_RE13_STORAGE1)
+			return internal_storage1
+		if(ITEM_SLOT_RE13_STORAGE2)
+			return internal_storage2
+		if(ITEM_SLOT_RE13_STORAGE3)
+			return internal_storage3
+		if(ITEM_SLOT_RE13_STORAGE4)
+			return internal_storage4
+		if(ITEM_SLOT_RE13_STORAGE5)
+			return internal_storage5
+		if(ITEM_SLOT_RE13_STORAGE6)
+			return internal_storage6
+
+	return ..()
+
+/mob/living/basic/re13_player/get_slot_by_item(obj/item/looking_for)
+	if(internal_storage1 == looking_for)
+		return ITEM_SLOT_RE13_STORAGE1
+	if(internal_storage2 == looking_for)
+		return ITEM_SLOT_RE13_STORAGE2
+	if(internal_storage3 == looking_for)
+		return ITEM_SLOT_RE13_STORAGE3
+	if(internal_storage4 == looking_for)
+		return ITEM_SLOT_RE13_STORAGE4
+	if(internal_storage5 == looking_for)
+		return ITEM_SLOT_RE13_STORAGE5
+	if(internal_storage6 == looking_for)
+		return ITEM_SLOT_RE13_STORAGE6
+	return ..()
+
+/mob/living/basic/re13_player/equip_to_slot(obj/item/equipping, slot, initial = FALSE, redraw_mob = FALSE, indirect_action = FALSE)
+	if(!slot)
+		return
+	if(!istype(equipping))
+		return
+
+	var/index = get_held_index_of_item(equipping)
+	if(index)
+		held_items[index] = null
+	update_held_items()
+
+	if(equipping.pulledby)
+		equipping.pulledby.stop_pulling()
+
+	equipping.screen_loc = null // will get moved if inventory is visible
+	equipping.forceMove(src)
+	SET_PLANE_EXPLICIT(equipping, ABOVE_HUD_PLANE, src)
+
+	switch(slot)
+		if(ITEM_SLOT_RE13_STORAGE1)
+			internal_storage1 = equipping
+			update_inv_internal_storage()
+		if(ITEM_SLOT_RE13_STORAGE2)
+			internal_storage2 = equipping
+			update_inv_internal_storage()
+		if(ITEM_SLOT_RE13_STORAGE3)
+			internal_storage3 = equipping
+			update_inv_internal_storage()
+		if(ITEM_SLOT_RE13_STORAGE4)
+			internal_storage4 = equipping
+			update_inv_internal_storage()
+		if(ITEM_SLOT_RE13_STORAGE5)
+			internal_storage5 = equipping
+			update_inv_internal_storage()
+		if(ITEM_SLOT_RE13_STORAGE6)
+			internal_storage6 = equipping
+			update_inv_internal_storage()
+		else
+			to_chat(src, span_danger("You are trying to equip this item to an unsupported inventory slot. Report this to a coder!"))
+			return
+
+	//Call back for item being equipped to drone
+	equipping.on_equipped(src, slot)
+
+/mob/living/basic/re13_player/proc/update_inv_internal_storage()
+	if(internal_storage1 && client && hud_used?.hud_shown)
+		internal_storage1.screen_loc = ui_re13slot1
+		client.screen += internal_storage1
+	if(internal_storage2 && client && hud_used?.hud_shown)
+		internal_storage2.screen_loc = ui_re13slot2
+		client.screen += internal_storage2
+	if(internal_storage3 && client && hud_used?.hud_shown)
+		internal_storage3.screen_loc = ui_re13slot3
+		client.screen += internal_storage3
+	if(internal_storage4 && client && hud_used?.hud_shown)
+		internal_storage4.screen_loc = ui_re13slot4
+		client.screen += internal_storage4
+	if(internal_storage5 && client && hud_used?.hud_shown)
+		internal_storage5.screen_loc = ui_re13slot5
+		client.screen += internal_storage5
+	if(internal_storage6 && client && hud_used?.hud_shown)
+		internal_storage6.screen_loc = ui_re13slot6
+		client.screen += internal_storage6

@@ -709,6 +709,8 @@ GLOBAL_LIST_INIT(skin_tone_names, list(
 		slot_strings += "hand"
 	if(slot_flags & ITEM_SLOT_DEX_STORAGE)
 		slot_strings += "dextrous storage"
+	if(slot_flags & (ITEM_SLOT_RE13_STORAGE1|ITEM_SLOT_RE13_STORAGE2|ITEM_SLOT_RE13_STORAGE3|ITEM_SLOT_RE13_STORAGE4|ITEM_SLOT_RE13_STORAGE5|ITEM_SLOT_RE13_STORAGE6))
+		slot_strings += "inventory slots"
 	return slot_strings
 
 ///Returns the direction that the initiator and the target are facing

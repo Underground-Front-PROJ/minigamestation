@@ -116,6 +116,15 @@
 #define ui_drone_storage "CENTER-2:14,SOUTH:5"
 #define ui_drone_head "CENTER-3:14,SOUTH:5"
 
+//RE13 Players
+#define ui_re13slot1 "CENTER+1:18,SOUTH:5"
+#define ui_re13slot2 "CENTER+2:20,SOUTH:5"
+#define ui_re13slot3 "CENTER+3:22,SOUTH:5"
+
+#define ui_re13slot4 "CENTER-1:-18,SOUTH:5"
+#define ui_re13slot5 "CENTER-2:-20,SOUTH:5"
+#define ui_re13slot6 "CENTER-3:-22,SOUTH:5"
+
 //Cyborgs
 #define ui_borg_health "EAST-1:28,CENTER-1:15"
 #define ui_borg_pull "EAST-2:26,SOUTH+1:7"

@@ -59,6 +59,9 @@
 #define COMSIG_KB_LIVING_GIVEITEM_DOWN "keybinding_living_giveitem_down"
 #define COMSIG_KB_LIVING_VIEW_PET_COMMANDS "keybinding_living_view_pet_commands"
 
+#define COMSIG_KB_LIVING_KICK_DOWN "keybinding_living_kick_down"
+#define COMSIG_KB_LIVING_DASH_DOWN "keybinding_living_dash_down"
+
 //Mob
 #define COMSIG_KB_MOB_FACENORTH_DOWN "keybinding_mob_facenorth_down"
 #define COMSIG_KB_MOB_FACEEAST_DOWN "keybinding_mob_faceeast_down"

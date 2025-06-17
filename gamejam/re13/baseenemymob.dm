@@ -14,7 +14,7 @@
 
 	melee_damage_lower = 1
 	melee_damage_upper = 2
-	melee_attack_cooldown = 14 SECONDS
+	melee_attack_cooldown = 20 SECONDS
 	speed = 4
 
 	attack_verb_continuous = "grabs"
@@ -39,6 +39,9 @@
 	faction = list("re13_enemy")
 	ai_controller = /datum/ai_controller/basic_controller/zombie/stupid
 
+/mob/living/basic/re13_enemy/grab(mob/living/target)
+	return FALSE
+
 /mob/living/basic/re13_enemy/Move()
 	if(no_walk)
 		return FALSE
@@ -60,5 +63,15 @@
 		var/mob/living/basic/re13_player/P = target
 		no_walk = TRUE
 
+		if(P.dir == NORTH)
+			P.add_offsets(GRABBING_TRAIT, x_add = 0, y_add = GRAB_PIXEL_SHIFT_PASSIVE, animate = TRUE)
+		if(P.dir == SOUTH)
+			P.add_offsets(GRABBING_TRAIT, x_add = 0, y_add = -GRAB_PIXEL_SHIFT_PASSIVE, animate = TRUE)
+		if(P.dir == EAST)
+			P.add_offsets(GRABBING_TRAIT, x_add = GRAB_PIXEL_SHIFT_PASSIVE, y_add = 0, animate = TRUE)
+		if(P.dir == WEST)
+			P.add_offsets(GRABBING_TRAIT, x_add = -GRAB_PIXEL_SHIFT_PASSIVE, y_add = 0, animate = TRUE)
+
+		P.add_filter("re13_grab", 2, list("type" = "outline", "color" = "#f130007a", "size" = 2))
 		P.stunned_for = 8
 		P.stunned = TRUE

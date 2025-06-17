@@ -47,23 +47,30 @@
 #define ITEM_SLOT_BACK (1<<10)
 /// Dextrous simplemob "hands" (used for Drones and Dextrous Guardians)
 #define ITEM_SLOT_DEX_STORAGE (1<<11)
+/// RE13 Inventory Slots
+#define ITEM_SLOT_RE13_STORAGE1 (1<<12)
+#define ITEM_SLOT_RE13_STORAGE2 (1<<13)
+#define ITEM_SLOT_RE13_STORAGE3 (1<<14)
+#define ITEM_SLOT_RE13_STORAGE4 (1<<15)
+#define ITEM_SLOT_RE13_STORAGE5 (1<<16)
+#define ITEM_SLOT_RE13_STORAGE6 (1<<17)
 /// Neck slot (ties, bedsheets, scarves)
-#define ITEM_SLOT_NECK (1<<12)
+#define ITEM_SLOT_NECK (1<<18)
 /// A character's hand slots
-#define ITEM_SLOT_HANDS (1<<13)
+#define ITEM_SLOT_HANDS (1<<19)
 /// Suit Storage slot
-#define ITEM_SLOT_SUITSTORE (1<<14)
+#define ITEM_SLOT_SUITSTORE (1<<20)
 /// Left Pocket slot
-#define ITEM_SLOT_LPOCKET (1<<15)
+#define ITEM_SLOT_LPOCKET (1<<21)
 /// Right Pocket slot
-#define ITEM_SLOT_RPOCKET (1<<16)
+#define ITEM_SLOT_RPOCKET (1<<22)
 /// Handcuff slot
-#define ITEM_SLOT_HANDCUFFED (1<<17)
+#define ITEM_SLOT_HANDCUFFED (1<<23)
 /// Legcuff slot (bolas, beartraps)
-#define ITEM_SLOT_LEGCUFFED (1<<18)
+#define ITEM_SLOT_LEGCUFFED (1<<24)
 
 /// Total amount of slots
-#define SLOTS_AMT 19 // Keep this up to date!
+#define SLOTS_AMT 25 // Keep this up to date!
 
 ///Inventory slots that can be blacklisted by a species from being equipped into
 DEFINE_BITFIELD(no_equip_flags, list(
@@ -81,6 +88,7 @@ DEFINE_BITFIELD(no_equip_flags, list(
 
 //SLOT GROUP HELPERS
 #define ITEM_SLOT_POCKETS (ITEM_SLOT_LPOCKET|ITEM_SLOT_RPOCKET)
+#define ITEM_SLOTS_RE13 (ITEM_SLOT_RE13_STORAGE1|ITEM_SLOT_RE13_STORAGE2|ITEM_SLOT_RE13_STORAGE3|ITEM_SLOT_RE13_STORAGE4|ITEM_SLOT_RE13_STORAGE5|ITEM_SLOT_RE13_STORAGE6)
 /// Slots that are physically on you
 #define ITEM_SLOT_ON_BODY (ITEM_SLOT_ICLOTHING | ITEM_SLOT_OCLOTHING | ITEM_SLOT_GLOVES | ITEM_SLOT_EYES | ITEM_SLOT_EARS | \
 	ITEM_SLOT_MASK | ITEM_SLOT_HEAD | ITEM_SLOT_FEET | ITEM_SLOT_ID | ITEM_SLOT_BELT | ITEM_SLOT_BACK | ITEM_SLOT_NECK )

@@ -10,8 +10,8 @@
 
 /area/re13/Entered(atom/movable/arrived, area/old_area)
 	. = ..()
-	if(istype(arrived, /mob/living))
-		var/mob/living/enterer = arrived
+	if(istype(arrived, /mob/living/basic/re13_player))
+		var/mob/living/basic/re13_player/enterer = arrived
 		var/area/area = get_area(src)
 		var/obj/structure/camera_controller/view_point = locate() in area
 		if(view_point)
