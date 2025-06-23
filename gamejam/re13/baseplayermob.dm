@@ -34,6 +34,23 @@
 		P.perform_dash()
 		return TRUE
 
+/datum/keybinding/living/block
+	hotkey_keys = list("F")
+	name = "block"
+	full_name = "Block"
+	description = "Deflect any incoming damage one time"
+	keybind_signal = COMSIG_KB_LIVING_BLOCK_DOWN
+
+/datum/keybinding/living/block/down(client/user, turf/target)
+	. = ..()
+	if(.)
+		return
+	var/mob/living/living_mob = user.mob
+	if(istype(living_mob, /mob/living/basic/re13_player))
+		var/mob/living/basic/re13_player/P = living_mob
+		P.perform_block()
+		return TRUE
+
 // HUD STUFF
 
 /datum/hud/re13_player/New(mob/living/owner)
@@ -261,6 +278,10 @@
 	unsuitable_atmos_damage = 0
 	unsuitable_cold_damage = 0
 
+	var/can_block = TRUE
+	var/currently_blocking = FALSE
+	var/block_recharge = 10
+
 	// Костыльная реализация инвентаря
 
 	var/obj/item/internal_storage1
@@ -278,6 +299,13 @@
 
 /mob/living/basic/re13_player/Life()
 	. = ..()
+
+	if(!can_block)
+		block_recharge -= 1
+
+	if(block_recharge <= 0 && !can_block)
+		can_block = TRUE
+		block_recharge = initial(block_recharge)
 
 	if(current_stam < max_stam && !stunned)
 		stam_regen -= 1
@@ -338,6 +366,7 @@
 	animate(pixel_y = 0, time = 0.3 SECONDS, easing = QUAD_EASING | EASE_IN)
 	spawn(1.2 SECONDS)
 		spin(4, 1)
+		new /obj/effect/temp_visual/jet_plume(get_turf(src))
 
 	for(var/mob/living/basic/re13_enemy/E in orange(1,src))
 
@@ -359,6 +388,23 @@
 	var/relative_direction = dir
 	var/atom/throw_target = get_edge_target_turf(src, relative_direction)
 	throw_at(throw_target, 3, 1, src, spin = FALSE, gentle = TRUE)
+
+/mob/living/basic/re13_player/proc/perform_block()
+	if(!can_block)
+		return
+
+	currently_blocking = TRUE
+	new /obj/effect/temp_visual/knockblast(get_turf(src))
+	spawn(0.5 SECONDS)
+		currently_blocking = FALSE
+		can_block = FALSE
+
+
+/mob/living/basic/re13_player/proc/damage_recieved()
+	var/oldcolor = color
+	animate(src, color = "#ff1111", time = 0.5 SECONDS)
+	spawn(0.8 SECONDS)
+		animate(src, color = oldcolor, time = 0.3 SECONDS)
 
 // Код инвентаря
 

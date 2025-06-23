@@ -61,6 +61,7 @@
 
 #define COMSIG_KB_LIVING_KICK_DOWN "keybinding_living_kick_down"
 #define COMSIG_KB_LIVING_DASH_DOWN "keybinding_living_dash_down"
+#define COMSIG_KB_LIVING_BLOCK_DOWN "keybinding_living_block_down"
 
 //Mob
 #define COMSIG_KB_MOB_FACENORTH_DOWN "keybinding_mob_facenorth_down"
