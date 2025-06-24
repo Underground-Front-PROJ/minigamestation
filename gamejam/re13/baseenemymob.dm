@@ -99,6 +99,8 @@
 					to_chat(P, span_userdanger("You parried the attack!"))
 					if(P.stunned)
 						P.stunned = FALSE
+						P.remove_filter("re13_grab")
+						P.remove_offsets(GRABBING_TRAIT)
 				else
 					to_chat(P, span_userdanger("[src] quickly bites you!"))
 					P.current_hitpoints -= 1
