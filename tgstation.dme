@@ -6661,6 +6661,7 @@
 #include "gamejam\re13\baseenemymob.dm"
 #include "gamejam\re13\baseplayermob.dm"
 #include "gamejam\re13\fixed_camera.dm"
+#include "gamejam\re13\weapons.dm"
 #include "gamejam\sunless_void\event_base.dm"
 #include "gamejam\sunless_void\overmap_basis.dm"
 #include "gamejam\sunless_void\events\random_events.dm"

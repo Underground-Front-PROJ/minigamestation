@@ -401,6 +401,8 @@
 
 
 /mob/living/basic/re13_player/proc/damage_recieved()
+	shake_camera(src, 2, 3)
+
 	var/oldcolor = color
 	animate(src, color = "#ff1111", time = 0.5 SECONDS)
 	spawn(0.8 SECONDS)
