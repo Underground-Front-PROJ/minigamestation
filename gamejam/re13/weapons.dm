@@ -7,7 +7,7 @@
 	force = 5
 	throwforce = 5
 
-	var/uses = 3
+	var/uses = 5
 
 /datum/embedding/combat_knife/none
 	embed_chance = 0
@@ -29,4 +29,5 @@
 				P.remove_offsets(GRABBING_TRAIT)
 				E.no_walk = TRUE
 				E.no_walk_for -= 5
+				E.current_hitpoints -= 2
 				qdel(src)
