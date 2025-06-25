@@ -75,8 +75,18 @@
 	faction = list("re13_enemy")
 	ai_controller = /datum/ai_controller/basic_controller/zombie/stupid
 
+	var/strange_overlay
+
 /obj/effect/temp_visual/security_holosign/lesser
 	duration = 10
+
+/mob/living/basic/re13_enemy/Initialize(mapload)
+	. = ..()
+
+	add_filter("strange_blur", 1, list("type" = "blur", "size" = 0.5))
+	var/mutable_appearance/strange_icon = mutable_appearance('icons/effects/effects.dmi', "curse", ABOVE_MOB_LAYER)
+	strange_overlay = strange_icon
+	add_overlay(strange_overlay)
 
 /mob/living/basic/re13_enemy/proc/actual_attack(target)
 	if(attack_cooldown > world.time)
@@ -120,8 +130,12 @@
 /mob/living/basic/re13_enemy/Life()
 	. = ..()
 
-	if(prob(chances_for_success) && !(attack_cooldown > world.time))
-		for(var/mob/living/basic/re13_player/P in orange(2,src))
+	if(current_hitpoints <= 0)
+		cut_overlay(strange_overlay)
+		death()
+
+	if(prob(chances_for_success) && !(attack_cooldown > world.time) && stat != DEAD)
+		for(var/mob/living/basic/re13_player/P in oview(2,src))
 			if(P.stunned)
 				var/actual_target = P
 				actual_attack(actual_target)

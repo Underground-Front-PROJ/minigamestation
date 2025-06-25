@@ -282,6 +282,10 @@
 	var/currently_blocking = FALSE
 	var/block_recharge = 10
 
+	var/in_crit = FALSE
+	var/add_crit_effects = TRUE
+	var/time_until_death = 30
+
 	// Костыльная реализация инвентаря
 
 	var/obj/item/internal_storage1
@@ -290,6 +294,13 @@
 	var/obj/item/internal_storage4
 	var/obj/item/internal_storage5
 	var/obj/item/internal_storage6
+
+/mob/living/basic/re13_player/examine(mob/living/user)
+	. = ..()
+	. += span_info("[span_big("STATUS:")]")
+	. += span_info("|HEALTH| - [span_boldnicegreen("[current_hitpoints]/[max_hitpoints]")]")
+	. += span_info("|STAMINA| - [span_boldnicegreen("[current_stam]/[max_stam]")]")
+	. += span_info("|INFECTION| - [span_boldnicegreen("[current_infestation]/[max_infestation]")]")
 
 /mob/living/basic/re13_player/Initialize(mapload)
 	. = ..()
@@ -300,11 +311,46 @@
 /mob/living/basic/re13_player/Life()
 	. = ..()
 
+	// Код смерти начинается тут
+
+	if(current_hitpoints == 0)
+		in_crit = TRUE
+
+		if(add_crit_effects)
+			var/mutable_appearance/health_icon = mutable_appearance('gamejam/re13/operator.dmi', "health0", SCREENTIP_LAYER, HUD_PLANE)
+			health_icon.pixel_y += 25
+			health_icon.pixel_x -= 5
+			hitpoints_indicator = health_icon
+			transform = transform.Turn(90)
+			add_filter("re13_crit", 2, list("type" = "outline", "color" = "#ececec7a", "size" = 2))
+			add_overlay(hitpoints_indicator)
+			speed = 6
+
+			add_crit_effects = FALSE
+
+	if(in_crit)
+		time_until_death -= 1
+
+	if(time_until_death <= 0)
+		in_crit = FALSE
+		remove_filter("re13_crit")
+		cut_overlay(hitpoints_indicator)
+		death()
+
+	if(current_hitpoints < 0)
+		in_crit = FALSE
+		remove_filter("re13_crit")
+		cut_overlay(hitpoints_indicator)
+		death()
+
+	// Код смерти заканчивается тут
+
 	if(!can_block)
 		block_recharge -= 1
 
 	if(block_recharge <= 0 && !can_block)
 		can_block = TRUE
+		balloon_alert(src, "[src] able to parry again!")
 		block_recharge = initial(block_recharge)
 
 	if(current_stam < max_stam && !stunned)
@@ -331,6 +377,23 @@
 			remove_filter("re13_grab")
 			remove_offsets(GRABBING_TRAIT)
 
+/mob/living/basic/re13_player/attack_hand(mob/living/basic/re13_player/user, list/modifiers)
+	. = ..()
+
+	if(in_crit)
+		if(do_after(user, 5 SECONDS, target = src))
+			current_hitpoints = 1
+			in_crit = FALSE
+			speed = 1
+
+			var/matrix/M = matrix()
+			M.Turn(0)
+			transform = M
+
+			time_until_death = initial(time_until_death)
+			remove_filter("re13_crit")
+			cut_overlay(hitpoints_indicator)
+
 /mob/living/basic/re13_player/grab(mob/living/target)
 	return FALSE
 
@@ -340,6 +403,10 @@
 	. = ..()
 
 /mob/living/basic/re13_player/MouseEntered(location, control, params)
+	if(in_crit)
+		return
+	if(stat == DEAD)
+		return
 	if(usr == src)
 		var/mutable_appearance/health_icon = mutable_appearance('gamejam/re13/operator.dmi', "health[current_hitpoints]", SCREENTIP_LAYER, HUD_PLANE)
 		health_icon.pixel_y += 20
@@ -353,12 +420,17 @@
 		add_overlay(stam_indicator)
 
 /mob/living/basic/re13_player/MouseExited(location, control, params)
+	if(in_crit)
+		return
+	if(stat == DEAD)
+		return
 	if(usr == src)
 		cut_overlay(hitpoints_indicator)
 		cut_overlay(stam_indicator)
 
 /mob/living/basic/re13_player/proc/combat_kick()
-	if(current_stam <= 0)
+	if(current_stam <= 0 || in_crit)
+		balloon_alert(src, "[src] unable to kick now!")
 		return
 
 	current_stam -= 1
@@ -368,7 +440,7 @@
 		spin(4, 1)
 		new /obj/effect/temp_visual/jet_plume(get_turf(src))
 
-	for(var/mob/living/basic/re13_enemy/E in orange(1,src))
+	for(var/mob/living/basic/re13_enemy/E in oview(1,src))
 
 		if(E.no_walk)
 			E.no_walk = FALSE
@@ -379,8 +451,12 @@
 
 		E.throw_at(throw_target, rand(3,6), 5, src, spin = TRUE)
 
+	for(var/obj/structure/re13/lootcrates/L in orange(1,src))
+		L.spawn_loot()
+
 /mob/living/basic/re13_player/proc/perform_dash()
-	if(current_stam <= 0 || stunned)
+	if(current_stam <= 0 || stunned || in_crit)
+		balloon_alert(src, "[src] unable to dash now!")
 		return
 
 	current_stam -= 1
@@ -391,6 +467,7 @@
 
 /mob/living/basic/re13_player/proc/perform_block()
 	if(!can_block)
+		balloon_alert(src, "[src] unable to parry now!")
 		return
 
 	currently_blocking = TRUE
@@ -404,7 +481,7 @@
 	shake_camera(src, 2, 3)
 
 	var/oldcolor = color
-	animate(src, color = "#ff1111", time = 0.5 SECONDS)
+	animate(src, color = "#ff1111", time = 0.5 SECONDS, layer = LIGHTING_ABOVE_ALL)
 	spawn(0.8 SECONDS)
 		animate(src, color = oldcolor, time = 0.3 SECONDS)
 

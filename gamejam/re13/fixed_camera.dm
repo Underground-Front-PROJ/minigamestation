@@ -25,3 +25,15 @@
 /area/re13/test1
 /area/re13/test2
 /area/re13/test3
+/area/re13/test4
+/area/re13/test5
+/area/re13/test6
+/area/re13/test7
+/area/re13/test8
+/area/re13/test9
+/area/re13/test10
+/area/re13/test11
+/area/re13/test12
+/area/re13/test13
+/area/re13/test14
+/area/re13/test15

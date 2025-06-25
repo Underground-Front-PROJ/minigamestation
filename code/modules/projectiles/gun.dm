@@ -374,6 +374,7 @@
 		return
 
 	if(!can_shoot()) //Just because you can pull the trigger doesn't mean it can shoot.
+		balloon_alert(user, "You can't shoot without bullets!")
 		shoot_with_empty_chamber(user)
 		return
 
