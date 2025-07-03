@@ -29,3 +29,20 @@
 	. = ..()
 	. += span_info("[span_big("INSIDE:")]")
 	. += span_info("[span_boldwarning("[stored]")] ammo for [span_boldwarning("[used_by]")]")
+
+/obj/item/re13/medkit
+	name = "PLACEHOLDER"
+	desc = "PLACEHOLDER"
+	icon = 'icons/obj/storage/box.dmi'
+	icon_state = "brutebox_f"
+
+	var/heal_count = 3
+
+/obj/structure/re13/ground_item/medkit
+	name = "Medkit"
+	desc = "For healing your wounds"
+	icon = 'icons/obj/storage/box.dmi'
+	icon_state = "brutebox_f"
+
+	stored_item = /obj/item/re13/medkit
+

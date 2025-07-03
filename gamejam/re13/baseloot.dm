@@ -3,7 +3,7 @@
 	desc = "PLACEHOLDER"
 	icon = 'icons/obj/storage/crates.dmi'
 	icon_state = "cargo_secure"
-	var/list/possible_item = list(/obj/structure/re13/ground_item/pistol_ammo)
+	var/list/possible_item = list(/obj/structure/re13/ground_item/pistol_ammo, /obj/structure/re13/ground_item/medkit, /obj/structure/re13/ground_item/shotgun_ammo)
 	var/chance_for_something = 50
 
 	density = TRUE

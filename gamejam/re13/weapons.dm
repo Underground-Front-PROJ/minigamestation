@@ -8,9 +8,26 @@
 	throwforce = 5
 
 	var/uses = 5 // Нож - расходник. Его можно использовать для ломания коробок(бесплатно), или же для того, чтобы к примеру выбраться из вражеского захвата
+	var/durability_indicator
 
 /datum/embedding/combat_knife/none
 	embed_chance = 0
+
+/obj/item/knife/combat/survival/re13/Initialize(mapload)
+	. = ..()
+
+	var/mutable_appearance/durability_icon = mutable_appearance('gamejam/re13/effects.dmi', "durability_[uses]", SCREENTIP_LAYER, HUD_PLANE)
+	durability_icon.pixel_y -= 18
+	durability_indicator = durability_icon
+	add_overlay(durability_indicator)
+
+
+/obj/item/knife/combat/survival/re13/proc/reset_overlay()
+
+	var/mutable_appearance/durability_icon = mutable_appearance('gamejam/re13/effects.dmi', "durability_[uses]", SCREENTIP_LAYER, HUD_PLANE)
+	durability_icon.pixel_y -= 18
+	durability_indicator = durability_icon
+	add_overlay(durability_indicator)
 
 /obj/item/knife/combat/survival/re13/attack(mob/living/target_mob, mob/living/user, list/modifiers, list/attack_modifiers)
 
@@ -19,8 +36,13 @@
 	if(istype(target_mob, /mob/living/basic/re13_enemy))
 		var/mob/living/basic/re13_enemy/E = target_mob
 		uses -= 1
+
+		cut_overlay(durability_indicator)
+		reset_overlay()
+
 		if(uses <= 0)
 			qdel(src)
+
 		E.current_hitpoints -= 1
 		if(istype(user, /mob/living/basic/re13_player))
 			var/mob/living/basic/re13_player/P = user
@@ -228,7 +250,7 @@
 
 /obj/item/re13/ammo/shotgun
 	stored = 12
-	used_by = "pistol"
+	used_by = "shotgun"
 
 /obj/structure/re13/ground_item/shotgun_ammo
 	name = "Ammo"

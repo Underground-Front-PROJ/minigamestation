@@ -295,6 +295,8 @@
 	var/obj/item/internal_storage5
 	var/obj/item/internal_storage6
 
+	var/remove_hud = FALSE
+
 /mob/living/basic/re13_player/examine(mob/living/user)
 	. = ..()
 	. += span_info("[span_big("STATUS:")]")
@@ -312,6 +314,11 @@
 	. = ..()
 
 	// Код смерти начинается тут
+
+	if(remove_hud)
+		cut_overlay(hitpoints_indicator)
+		cut_overlay(stam_indicator)
+		remove_hud = FALSE
 
 	if(current_hitpoints == 0)
 		in_crit = TRUE
@@ -365,7 +372,7 @@
 		var/mob/living/basic/re13_enemy/E = locate() in orange(1,src) // Проверяем, держат ли нас вообще
 
 		if(stunned_for > 0)
-			if(!E) // Если вокруг нас нет ни единого противника - мы моментально возвращаемся в игру
+			if(!E || E.stat == DEAD) // Если вокруг нас нет ни единого ЖИВОГО противника - мы моментально возвращаемся в игру
 				stunned_for = 0
 				stunned = FALSE
 				remove_filter("re13_grab")
@@ -376,6 +383,22 @@
 			stunned = FALSE
 			remove_filter("re13_grab")
 			remove_offsets(GRABBING_TRAIT)
+
+/mob/living/basic/re13_player/attackby(obj/item/attacking_item, mob/user, list/modifiers, list/attack_modifiers)
+	. = ..()
+	if(istype(attacking_item, /obj/item/re13/medkit))
+		if(in_crit)
+			balloon_alert(user, "[src] need to be stabilized first!")
+			return
+		var/obj/item/re13/medkit/M = attacking_item
+		if(do_after(user, 5 SECONDS, target = src))
+			current_hitpoints += M.heal_count
+			if(current_hitpoints > max_hitpoints)
+				current_hitpoints = max_hitpoints
+			return
+
+/mob/living/basic/re13_player/start_pulling(atom/movable/movable_pulled, state, force, supress_message)
+	return
 
 /mob/living/basic/re13_player/attack_hand(mob/living/basic/re13_player/user, list/modifiers)
 	. = ..()
@@ -408,6 +431,7 @@
 	if(stat == DEAD)
 		return
 	if(usr == src)
+
 		var/mutable_appearance/health_icon = mutable_appearance('gamejam/re13/operator.dmi', "health[current_hitpoints]", SCREENTIP_LAYER, HUD_PLANE)
 		health_icon.pixel_y += 20
 		hitpoints_indicator = health_icon
@@ -425,6 +449,7 @@
 	if(stat == DEAD)
 		return
 	if(usr == src)
+		remove_hud = TRUE
 		cut_overlay(hitpoints_indicator)
 		cut_overlay(stam_indicator)
 
