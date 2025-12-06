@@ -1,4 +1,5 @@
 /mob/living/carbon/alien
+	abstract_type = /mob/living/carbon/alien
 	name = "alien"
 	icon = 'icons/mob/nonhuman-player/alien.dmi'
 	gender = FEMALE //All xenos are girls!!
@@ -19,7 +20,6 @@
 	var/leaping = FALSE
 	///The speed this alien should move at.
 	var/alien_speed = 0
-	gib_type = /obj/effect/decal/cleanable/blood/gibs/xeno
 	unique_name = TRUE
 
 	var/static/regex/alien_name_regex = new("alien (larva|sentinel|drone|hunter|praetorian|princess|queen)( \\(\\d+\\))?")

@@ -250,6 +250,7 @@ at the cost of risking a vicious bite.**/
 	icon_state = "steam_vent"
 	anchored = TRUE
 	density = FALSE
+	custom_materials = list(/datum/material/iron = SHEET_MATERIAL_AMOUNT * 2.3, /datum/material/plastic = SMALL_MATERIAL_AMOUNT * 2)
 	/// How often does the vent reset the blow_steam cooldown.
 	var/steam_speed = 20 SECONDS
 	/// Is the steam vent active?
@@ -303,7 +304,7 @@ at the cost of risking a vicious bite.**/
 		return TRUE
 
 /obj/structure/steam_vent/atom_deconstruct(disassembled = TRUE)
-	new /obj/item/stack/sheet/iron(loc, 1)
+	new /obj/item/stack/sheet/iron(loc)
 	new /obj/item/stock_parts/water_recycler(loc, 1)
 
 /**

@@ -291,6 +291,7 @@
 	desc = "A simple hook carved from sharpened bone"
 	icon_state = "hook_bone"
 	wiki_desc = "A generic fishing hook carved out of sharpened bone. Bone fishing rods come pre-equipped with it."
+	custom_materials = list(/datum/material/bone = SHEET_MATERIAL_AMOUNT)
 
 /obj/item/fishing_hook/stabilized
 	name = "gyro-stabilized hook"
@@ -307,7 +308,7 @@
 
 /obj/item/fishing_hook/jaws
 	name = "jawed hook"
-	desc = "Despite hints of rust, this gritty beartrap-like hook hybrid manages to look even more threating than the real thing. May neptune have mercy of whatever gets caught in its jaws."
+	desc = "Despite hints of rust, this gritty beartrap-looking hook looks even more threatening than the real thing. May neptune have mercy of whatever gets caught in its jaws."
 	icon_state = "jaws"
 	w_class = WEIGHT_CLASS_NORMAL
 	fishing_hook_traits = FISHING_HOOK_NO_ESCAPE|FISHING_HOOK_NO_ESCAPE|FISHING_HOOK_KILL

@@ -17,6 +17,7 @@
 	anchored = TRUE
 	buckle_lying = 0
 	pass_flags_self = PASSTABLE | LETPASSTHROW
+	custom_materials = list(/datum/material/wood = SHEET_MATERIAL_AMOUNT * 10)
 	/// is the bonfire lit?
 	var/burning = FALSE
 	/// icon for the bonfire while on. for a softer more burning embers icon, use "bonfire_warm"
@@ -90,7 +91,7 @@
 			bonfire_log.pixel_x += rand(1,4)
 			bonfire_log.pixel_y += rand(1,4)
 		if(can_buckle || grill)
-			new /obj/item/stack/rods(loc, 1)
+			new /obj/item/stack/rods(loc)
 		qdel(src)
 		return
 

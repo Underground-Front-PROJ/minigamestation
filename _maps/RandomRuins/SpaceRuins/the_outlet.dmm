@@ -534,7 +534,7 @@
 "nM" = (
 /obj/structure/lattice,
 /turf/template_noop,
-/area/template_noop)
+/area/space/nearstation)
 "od" = (
 /turf/closed/wall/rust,
 /area/ruin/space/has_grav/the_outlet/storefront)
@@ -551,7 +551,7 @@
 "oG" = (
 /obj/structure/table/reinforced/rglass,
 /obj/item/clothing/glasses/blindfold,
-/obj/item/clothing/mask/muzzle/breath,
+/obj/item/clothing/mask/breath/muzzle,
 /obj/item/clothing/suit/jacket/straight_jacket,
 /turf/open/floor/iron/freezer,
 /area/ruin/space/has_grav/the_outlet/researchrooms)
@@ -1566,7 +1566,7 @@
 "LA" = (
 /obj/item/stack/rods/two,
 /turf/template_noop,
-/area/template_noop)
+/area/space/nearstation)
 "LL" = (
 /mob/living/basic/construct/proteon/hostile,
 /obj/effect/decal/cleanable/crayon/rune2,

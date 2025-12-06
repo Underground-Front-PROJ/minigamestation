@@ -96,6 +96,9 @@
 	name = "\improper APLU \"Paddy\""
 	icon_state = "paddy"
 	base_icon_state = "paddy"
+	movedelay = 5
+	slow_pressure_step_in = 5
+	fast_pressure_step_in = 3
 	max_temperature = 20000
 	max_integrity = 250
 	mech_type = EXOSUIT_MODULE_PADDY
@@ -180,7 +183,7 @@
 	var/obj/vehicle/sealed/mecha/ripley/paddy/secmech = chassis
 	button_icon_state = "mech_siren_[secmech?.siren ? "on" : "off"]"
 
-/datum/action/vehicle/sealed/mecha/siren/Trigger(trigger_flags, forced_state = FALSE)
+/datum/action/vehicle/sealed/mecha/siren/Trigger(mob/clicker, trigger_flags, forced_state = FALSE)
 	if(!..())
 		return
 	var/obj/vehicle/sealed/mecha/ripley/paddy/secmech = chassis
@@ -297,6 +300,8 @@ GLOBAL_DATUM(cargo_ripley, /obj/vehicle/sealed/mecha/ripley/cargo)
 	icon_state = "mecha_bin"
 	equipment_slot = MECHA_UTILITY
 	detachable = FALSE
+	can_be_triggered = TRUE
+	action_type = /datum/action/vehicle/sealed/mecha/equipment/cargo_module
 	///Number of atoms we can store
 	var/cargo_capacity = 15
 

@@ -113,7 +113,7 @@
 					/obj/item/folder/red,
 					/obj/item/folder/yellow,
 					/obj/item/clipboard = 2,
-					/obj/item/stamp,
+					/obj/item/stamp/granted,
 					/obj/item/stamp/denied,
 					/obj/item/laser_pointer/purple,
 				)
@@ -224,8 +224,7 @@
 ///Generate assorted uplink items, taking into account the same surplus modifiers used for surplus crates
 /datum/supply_pack/misc/syndicate/fill(obj/structure/closet/crate/C)
 	var/list/uplink_items = list()
-	for(var/datum/uplink_item/item_path as anything in SStraitor.uplink_items_by_type)
-		var/datum/uplink_item/item = SStraitor.uplink_items_by_type[item_path]
+	for(var/datum/uplink_item/item as anything in SStraitor.uplink_items)
 		if(item.purchasable_from & contents_uplink_type && item.item)
 			uplink_items += item
 
@@ -257,3 +256,17 @@
 		/obj/item/hatchet/cutterblade = 1,
 	)
 	crate_name = "paper cutters crate"
+
+/datum/supply_pack/misc/water_cooler
+	name = "Liquid Cooler - Water"
+	desc = "A liquid cooler, stocked with the freshest water in all the Periphery. Perfect for wasting time at the office!"
+	cost = CARGO_CRATE_VALUE * 2
+	contains = list(/obj/structure/reagent_dispensers/water_cooler/jugless = 1, /obj/item/reagent_containers/cooler_jug/water = 1)
+	crate_name = "water cooler crate"
+
+/datum/supply_pack/misc/punch_cooler
+	name = "Liquid Cooler - Fruit Punch"
+	desc = "A liquid cooler, stocked with exotic fruit punch that can heal injuries! Be sure to remain near the liquid cooler while drinking, for your own health and safety. Seriously, do NOT drink this stuff away from the cooler."
+	cost = CARGO_CRATE_VALUE * 6
+	contains = list(/obj/structure/reagent_dispensers/water_cooler/jugless = 1, /obj/item/reagent_containers/cooler_jug/punch = 1)
+	crate_name = "punch cooler crate"
